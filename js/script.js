@@ -1,93 +1,135 @@
 'use strict';
 
-var output = document.getElementById('output'),
-  pickRock = document.getElementById('rock-button'),
-  pickPaper = document.getElementById('paper-button'),
-  pickScissors = document.getElementById('scissors-button'),
-  newGame = document.getElementById('new-game'),
-  playerScoreCount = document.getElementById('player-score'),
-  computerScoreCount = document.getElementById('computer-score'),
-  roundCount = document.getElementById('round-to-play'),
-  playerScore = 0,
-  computerScore = 0,
-  numbOfRounds,
-  showButtons = function () {
-    pickPaper.classList.toggle('hideButtons');
-    pickRock.classList.toggle('hideButtons');
-    pickScissors.classList.toggle('hideButtons');
-  };
+var params = {
+  output: document.getElementById('output'),
+  pickRock: document.getElementById('rock-button'),
+  pickPaper: document.getElementById('paper-button'),
+  pickScissors: document.getElementById('scissors-button'),
+  result: document.getElementById('result'),
+  newGame: document.getElementById('new-game'),
+  playerScoreCount: document.getElementById('player-score'),
+  computerScoreCount: document.getElementById('computer-score'),
+  roundCount: document.getElementById('round-to-play'),
+  playerScore: 0,
+  computerScore: 0,
+  numbOfRounds: 0,
+  winner: '',
+  progress: []
+}
+
+var showButtons = function () {
+  params.pickPaper.classList.toggle('hideButtons');
+  params.pickRock.classList.toggle('hideButtons');
+  params.pickScissors.classList.toggle('hideButtons');
+}
 
 showButtons();
 
-newGame.addEventListener('click', function () {
-  numbOfRounds = prompt('How many rounds do you want to play?');
-  if (isFinite(numbOfRounds) && numbOfRounds > 0) {
-    roundCount.innerHTML = 'You have chosen: ' + numbOfRounds + ' rounds to win the game!';
+params.newGame.addEventListener('click', function () {
+  params.numbOfRounds = prompt('How many rounds would you like to play?');
+  if (isFinite(params.numbOfRounds) && params.numbOfRounds > 0) {
+    params.roundCount.innerHTML = 'You have chosen: ' + params.numbOfRounds + ' rounds.';
     showButtons();
   } else {
-    roundCount.innerHTML = 'Please, give a number!';
-    newGame.classList.toggle('hideButtons');
-  };
-  newGame.classList.toggle('hideButtons');
-
-  output.innerHTML = '';
-  playerScore = 0;
-  computerScore = 0;
+    params.roundCount.innerHTML = 'Please, enter a number!';
+    params.newGame.classList.toggle('hideButtons');
+  }
+  params.newGame.classList.toggle('hideButtons');
+  params.output.innerHTML = '';
+  params.playerScore = 0;
+  params.computerScore = 0;
+  params.progress = [];
 });
 
-pickRock.addEventListener('click', function () {
-  playerMove('rock', computerMove());
-  countingScores();
-  gameOver();
-});
+var selectMove = document.getElementsByClassName('player-move');
 
-pickPaper.addEventListener('click', function () {
-  playerMove('paper', computerMove());
-  countingScores();
-  gameOver();
-});
-
-pickScissors.addEventListener('click', function () {
-  playerMove('scissors', computerMove());
-  countingScores();
-  gameOver();
-});
+for (var i = 0; i < selectMove.length; i++) {
+  selectMove[i].addEventListener('click', function () {
+    var kindOfMove = this.getAttribute('data-move');
+    playerMove(kindOfMove, params.winner, params.playerScore, params.computerScore, computerMove());
+    countingScores();
+    gameOver();
+  });
+};
 
 var computerMove = function () {
   var possibles = ['paper', 'rock', 'scissors'];
   var computerChoice = possibles[Math.floor(Math.random() * possibles.length)];
   return computerChoice;
-};
+}
 
-var playerMove = function (playerPick, computerPick) {
-  if (playerPick === computerPick) {
-    output.innerHTML = 'It is DRAW!<br>You chose: ' + playerPick + ' computer chose: ' + computerPick + '<br>';
-  } else if ((playerPick === 'paper' && computerPick === 'rock') ||
-    (playerPick === 'rock' && computerPick === 'scissors') ||
-    (playerPick === 'scissors' && computerPick === 'paper')) {
-    output.innerHTML = 'You WON !<br>You chose: ' + playerPick + ' and computer chose: ' + computerPick + '<br>';
-    playerScore++;
+var playerMove = function (kindOfMove, winner, playerScore, computerScore, computerPick) {
+  if (kindOfMove === computerPick) {
+    params.output.innerHTML = 'It is draw!<br>You chose: ' + kindOfMove + ' and computer chose: ' + computerPick + '<br>';
+    params.winner = 'no one';
+  } else if (
+    (kindOfMove === 'paper' && computerPick === 'rock') ||
+    (kindOfMove === 'rock' && computerPick === 'scissors') ||
+    (kindOfMove === 'scissors' && computerPick === 'paper')) {
+    params.output.innerHTML = 'You won!<br>You chose: ' + kindOfMove + ' and computer chose: ' + computerPick + '<br>';
+    params.playerScore++;
+    params.winner = 'player';
   } else {
-    output.innerHTML = ' You LOST !<br>You chose: ' + playerPick + ' and computer chose: ' + computerPick + '<br>';
-    computerScore++;
-  };
-};
+    params.output.innerHTML = ' You lost!<br>You chose: ' + kindOfMove + ' and computer chose: ' + computerPick + '<br>';
+    params.computerScore++;
+    params.winner = 'computer';
+  }
+  params.progress.push({
+    playerMove: kindOfMove,
+    computerMove: computerPick,
+    playerScore: params.playerScore,
+    computerScore: params.computerScore,
+    winner: params.winner,
+  });
+}
+
 var countingScores = function () {
-  playerScoreCount.innerHTML = 'Player score: ' + playerScore;
-  computerScoreCount.innerHTML = 'Computer score: ' + computerScore;
-};
+  params.playerScoreCount.innerHTML = 'Player score: ' + params.playerScore;
+  params.computerScoreCount.innerHTML = 'Computer score: ' + params.computerScore;
+}
 
 var gameOver = function () {
-  if (playerScore == numbOfRounds || computerScore == numbOfRounds) {
-    if (playerScore > computerScore) {
-      output.innerHTML = 'GAME OVER! YOU WON ENTIRE GAME';
+  if (params.playerScore == params.numbOfRounds || params.computerScore == params.numbOfRounds) {
+    if (params.playerScore > params.computerScore) {
+      showResult('You won the entire game!');
     } else {
-      output.innerHTML = 'GAME OVER! YOU LOST ENTIRE GAME';
-    };
-    playerScoreCount.innerHTML = '';
-    roundCount.innerHTML = '';
-    computerScoreCount.innerHTML = '';
+      showResult('You lost the entire game!');
+    }
+    params.output.innerHTML = '';
+    params.playerScoreCount.innerHTML = '';
+    params.roundCount.innerHTML = '';
+    params.computerScoreCount.innerHTML = '';
+    params.newGame.classList.toggle('hideButtons');
     showButtons();
-    newGame.classList.toggle('hideButtons');
   }
-};
+}
+
+var showResult = function (text) {
+  var showModals = document.getElementsByClassName('result');
+  for (var i = 0; i < showModals.length; i++) {
+    showModals[i].classList.add('show');
+  }
+  var tableResult = document.querySelector('tbody');
+  tableResult.innerHTML = '';
+  for (var j = 0; j < params.progress.length; j++) {
+    tableResult.innerHTML += '<tr><td>' + params.progress[j].playerMove + '</td><td>' + params.progress[j].computerMove + '</td><td>' + params.progress[j].computerScore + '</td><td>' + params.progress[j].playerScore + '</td><td>' + params.progress[j].winner + '</td></tr>';
+  }
+  document.querySelector('header').innerHTML = text;
+}
+
+var hideModal = function (event) {
+  event.preventDefault();
+  document.querySelector('#modal-overlay').classList.remove('show');
+}
+
+var closeButtons = document.querySelectorAll('.close');
+for (var i = 0; i < closeButtons.length; i++) {
+  closeButtons[i].addEventListener('click', hideModal)
+}
+
+var modals = document.querySelectorAll('.modal');
+for (var i = 0; i < modals.length; i++) {
+  modals[i].addEventListener('click', function (event) {
+    event.stopPropagation();
+  });
+}

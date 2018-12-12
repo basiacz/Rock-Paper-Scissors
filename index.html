@@ -4,24 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Zad. 8.4</title>
-
   <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
 
   <h1>Rock-Paper-Scissors</h1>
-  <div>
-    <button id="rock-button">Rock</button>
-  </div><br><br>
+  <div class="container">
+    <div>
+      <button id="rock-button" class="player-move" data-move="rock">Rock</button>
+    </div><br><br>
 
-  <div>
-    <button id="paper-button">Paper</button>
-  </div><br><br>
+    <div>
+      <button id="paper-button" class="player-move" data-move="paper">Paper</button>
+    </div><br><br>
 
-  <div>
-    <button id="scissors-button">Scissors</button>
+    <div>
+      <button id="scissors-button" class="player-move" data-move="scissors">Scissors</button>
+    </div>
   </div>
 
   <div id="output"><br><br>
@@ -37,7 +37,30 @@
   <div><button id="new-game">Start new game</button>
     <div id="round-to-play"></div>
   </div>
-  <script src="js/index.js"></script>
+
+  <div class="overlay result" id="modal-overlay">
+    <div class="modal result">
+      <a href="#" class="close">x</a>
+      <header>Game result</header>
+      <div class="content">
+        <table>
+          <thead>
+            <tr>
+              <th>Player move</th>
+              <th>Computer move</th>
+              <th>Computer scores</th>
+              <th>Player scores</th>
+              <th>Winner of the round</th>
+            </tr>
+          </thead>
+          <tbody class="table-content">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
 </body>
 
 </html>
