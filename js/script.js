@@ -36,6 +36,7 @@ params.newGame.addEventListener('click', function() {
     params.roundCount.innerHTML = 'Please, enter a number!';
     params.newGame.classList.toggle('hideButtons');
   }
+
   params.newGame.classList.toggle('hideButtons');
   params.output.innerHTML = '';
   params.playerScore = 0;
@@ -75,6 +76,7 @@ var playerMove = function(kindOfMove, winner, playerScore, computerScore, comput
     params.computerScore++;
     params.winner = 'computer';
   }
+
   params.progress.push({
     playerMove: kindOfMove,
     computerMove: computerPick,
@@ -112,12 +114,14 @@ var showResult = function(text) {
   for (var i = 0; i < showModals.length; i++) {
     showModals[i].classList.add('show');
   }
+
   var tableResult = document.querySelector('tbody');
   tableResult.innerHTML = '';
 
   for (var j = 0; j < params.progress.length; j++) {
     tableResult.innerHTML += '<tr><td>' + params.progress[j].playerMove + '</td><td>' + params.progress[j].computerMove + '</td><td>' + params.progress[j].computerScore + '</td><td>' + params.progress[j].playerScore + '</td><td>' + params.progress[j].winner + '</td></tr>';
   }
+
   document.querySelector('header').innerHTML = text;
 };
 
@@ -134,4 +138,4 @@ for (var i = 0; i < modals.length; i++) {
   modals[i].addEventListener('click', function(event) {
     event.stopPropagation();
   });
-};
+}
