@@ -51,7 +51,7 @@ for (var i = 0; i < params.selectMove.length; i++) {
     countingScores();
     gameOver();
   });
-};
+}
 
 var computerMove = function() {
   var possibles = ['paper', 'rock', 'scissors'];
